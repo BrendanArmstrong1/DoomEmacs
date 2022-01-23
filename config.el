@@ -37,14 +37,14 @@
   '(solaire-default-face :background "#101010"))
 ;; "monospace" means use the system default. However, the default is usually two
 ;; points larger than I'd like, so I specify size 12 here.
-(setq doom-font (font-spec :family "FuraCode Nerd Font Mono" :size 16)
+(setq doom-font (font-spec :family "FiraCode Nerd Font Mono" :size 16)
       doom-variable-pitch-font (font-spec :family "Noto Serif" :size 15)
-      doom-big-font (font-spec :family "FuraCode Nerd Font Mono" :size 25)
-      ivy-posframe-font (font-spec :family "FuraCode Nerd Font Mono" :size 15))
+      doom-big-font (font-spec :family "FiraCode Nerd Font Mono" :size 25)
+      ivy-posframe-font (font-spec :family "FiraCode Nerd Font Mono" :size 15))
 
 ;; Prevents some cases of Emacs flickering
 (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
-(add-to-list 'default-frame-alist '(alpha . 85))
+(add-to-list 'default-frame-alist '(alpha . 85 ))
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -87,6 +87,8 @@
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type `relative)
 
+(after! undo-tree
+  (setq undo-tree-auto-save-history nil))
 ;; Disable invasive lsp-mode features
 (setq lsp-ui-sideline-enable nil   ; not anymore useful than flycheck
       lsp-ui-doc-enable nil        ; slow and redundant with K
