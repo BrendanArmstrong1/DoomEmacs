@@ -8,6 +8,8 @@
 ;; clients, file templates and snippets.
 (setq user-full-name "Brendan Armstrong"
       user-mail-address "Brendan.Armstrong@mail.com")
+(setq auth-sources '("~/.authinfo.gpg"))
+(setq forge-topic-list-limit '(100 . -10))
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
@@ -108,8 +110,10 @@
       :map evil-window-map
       "C-q" #'evil-quit)
 (map! :after evil
-   :nv "C-a" #'evil-numbers/inc-at-pt
-   :nv "C-M-a" #'evil-numbers/dec-at-pt)
+      :localleader
+      :map dired-mode-map
+      "f" #'dired-create-empty-file)
+
 (use-package! evil-matchit
   :after evil
   :config
