@@ -37,12 +37,15 @@
   '(default :background "#101010")
   '(hl-line :background "#101010")
   '(solaire-default-face :background "#101010"))
-;; "monospace" means use the system default. However, the default is usually two
-;; points larger than I'd like, so I specify size 12 here.
-(setq doom-font (font-spec :family "FiraCode Nerd Font Mono" :size 16)
-      doom-variable-pitch-font (font-spec :family "Noto Serif" :size 15)
-      doom-big-font (font-spec :family "FiraCode Nerd Font Mono" :size 25)
-      ivy-posframe-font (font-spec :family "FiraCode Nerd Font Mono" :size 15))
+(setq doom-font (font-spec :family "Hack Nerd Font Mono" :size 16)
+      doom-variable-pitch-font (font-spec :family "Noto Serif" :size 16)
+      doom-big-font (font-spec :family "Hack Nerd Font Mono" :size 25))
+(after! doom-themes
+  (setq doom-themes-enable-bold t
+        doom-themes-enable-italic t))
+(custom-set-faces!
+  '(font-lock-comment-face :slant italic)
+  '(font-lock-keyword-face :slant italic))
 
 ;; Prevents some cases of Emacs flickering
 (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
@@ -51,8 +54,6 @@
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
-
-
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
@@ -102,12 +103,16 @@
 
 (map! :after evil
         :map global-map
-        "C-j" #'evil-window-down
-        "C-k" #'evil-window-up
-        "C-h" #'evil-window-left
-        "C-l" #'evil-window-right)
+        "C-M-j" #'evil-window-down
+        "C-M-k" #'evil-window-up
+        "C-M-h" #'evil-window-left
+        "C-M-l" #'evil-window-right)
 (map! :after evil
       :map evil-window-map
+      "C-j" #'+evil/window-move-down
+      "C-k" #'+evil/window-move-up
+      "C-h" #'+evil/window-move-left
+      "C-l" #'+evil/window-move-right
       "C-q" #'evil-quit)
 (map! :after evil
       :localleader
