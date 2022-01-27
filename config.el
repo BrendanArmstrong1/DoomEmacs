@@ -7,6 +7,7 @@
         mu4e-get-mail-command "mbsync -c ~/.config/isync/mbsyncrc -a"
         auth-sources '("~/.authinfo.gpg")
         org-directory "~/org/"
+        org-link-search-must-match-exact-headline nil
         forge-topic-list-limit '(100 . -10)
         lsp-ui-sideline-enable nil   ; not anymore useful than flycheck
         lsp-ui-doc-enable nil        ; slow and redundant with K
@@ -15,7 +16,7 @@
         ;; whole development environment for some ecosystems.
         lsp-enable-symbol-highlighting nil
         +lsp-prompt-to-install-server 'quiet
-        display-line-numbers-type `relative
+        display-line-numbers-type 'relative
         doom-scratch-initial-major-mode 'lisp-interaction-mode
         evil-want-minibuffer t
         company-idle-delay nil
@@ -49,8 +50,14 @@
 (after! undo-tree
   (setq undo-tree-auto-save-history nil))
 
-(map!   :after evil
-        :map org-mode-map
+(map!   :after evil-org
+        :map evil-org-mode-map
+        :i "RET" #'evil-org-return
+        :nv "M-J" #'org-metadown
+        :nv "M-K" #'org-metaup
+        :nv "M-j" #'org-shiftmetadown
+        :nv "M-k" #'org-shiftmetaup
+        :nv "DEL" #'org-mark-ring-goto
         :nv "C-j" #'org-forward-element
         :nv "C-k" #'org-backward-element
         :nv "C-l" #'org-down-element
@@ -66,19 +73,15 @@
 
 (map!
         :after evil
-        :map global-map
-        "C-M-j" #'evil-window-down
-        "C-M-k" #'evil-window-up
-        "C-M-h" #'evil-window-left
-        "C-M-l" #'evil-window-right)
-
-(map!
-        :after evil
         :map evil-window-map
-        "C-j" #'+evil/window-move-down
-        "C-k" #'+evil/window-move-up
-        "C-h" #'+evil/window-move-left
-        "C-l" #'+evil/window-move-right
+        "C-j" #'evil-window-down
+        "C-k" #'evil-window-up
+        "C-h" #'evil-window-left
+        "C-l" #'evil-window-right
+        "j" #'+evil/window-move-down
+        "k" #'+evil/window-move-up
+        "h" #'+evil/window-move-left
+        "l" #'+evil/window-move-right
         "C-q" #'evil-quit)
 
 (map!
