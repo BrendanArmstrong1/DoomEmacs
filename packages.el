@@ -50,3 +50,4 @@
 ;(unpin! t)
 (package! evil-matchit)
 (package! evil-textobj-line)
+(package! org-bullets)
