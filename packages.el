@@ -51,3 +51,4 @@
 (package! evil-matchit)
 (package! evil-textobj-line)
 (package! org-bullets)
+(package! visual-fill-column)

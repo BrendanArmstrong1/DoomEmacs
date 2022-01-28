@@ -61,7 +61,7 @@
 
 
 (add-hook! org-mode
-        (defun org-font-setup ()
+        (defun BA/org-font-setup ()
         ;; Replace list hyphen with dot
         (font-lock-add-keywords 'org-mode
                                 '(("^ *\\([-]\\) "
@@ -86,6 +86,15 @@
         (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
         (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))))
 
+(defun BA/org-mode-visual-fill ()
+  (setq
+   visual-fill-column-enable-sensible-window-split t
+   visual-fill-column-width 120)
+  (visual-fill-column-mode 1))
+
+(use-package! visual-fill-column
+  :hook (org-mode . BA/org-mode-visual-fill))
+
 (use-package! org-bullets
   :after org
   :hook (org-mode . org-bullets-mode))
@@ -93,6 +102,8 @@
 
 
 (map! :after evil
+      :nv "j" #'evil-next-visual-line
+      :nv "k" #'evil-previous-visual-line
       :nv "DEL" #'org-mark-ring-goto)
 
 (map!   :after evil-org
