@@ -11,15 +11,9 @@
         ;; Roam settings
         org-roam-directory (concat org-directory "roam/")
         org-roam-db-location (concat org-roam-directory ".org-roam.db")
+        org-roam-index-file (concat org-roam-directory "Index.org")
         ;; Journal settings
         forge-topic-list-limit '(100 . -10)
-        lsp-ui-sideline-enable nil   ; not anymore useful than flycheck
-        lsp-ui-doc-enable nil        ; slow and redundant with K
-        ;; If an LSP server isn't present when I start a prog-mode buffer, you
-        ;; don't need to tell me. I know. On some systems I don't care to have a
-        ;; whole development environment for some ecosystems.
-        lsp-enable-symbol-highlighting nil
-        +lsp-prompt-to-install-server 'quiet
         display-line-numbers-type 'relative
         doom-scratch-initial-major-mode 'lisp-interaction-mode
         evil-want-minibuffer t
@@ -34,9 +28,7 @@
         doom-variable-pitch-font (font-spec :family "Noto Serif" :height 1.0)
         doom-big-font (font-spec :family "Hack Nerd Font Mono" :size 26))
 
-(setq-default custom-file (expand-file-name ".custom.el" doom-private-dir))
-(when (file-exists-p custom-file)
-  (load custom-file))
+(setq-default custom-file "/dev/null")
 
 ;; Theme stuff
 (custom-theme-set-faces! 'doom-vibrant
@@ -46,15 +38,11 @@
 (after! doom-themes
         (setq doom-themes-enable-bold t
                 doom-themes-enable-italic t))
-(custom-set-faces!
+(set-face-attribute
         '(font-lock-comment-face :slant italic)
         '(font-lock-keyword-face :slant italic))
 (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
 (add-to-list 'default-frame-alist '(alpha . 85 ))
-(custom-set-faces!
-  '(doom-dashboard-banner :inherit default)
-  '(doom-dashboard-loaded :inherit default))
-(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
 (remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-footer)
 (dolist (mode '(org-mode-hook
                 term-mode-hook
@@ -92,23 +80,18 @@
   (setq! magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
 
+(after! rustic
+  (setq rustic-lsp-server 'rls))
 
-
+(setq lsp-clients-clangd-args '("-j=3"
+                                "--background-index"
+                                "--clang-tidy"
+                                "--completion-style=detailed"
+                                "--header-insertion=never"
+                                "--header-insertion-decorators=0"))
+(after! lsp-clangd (set-lsp-priority! 'clangd 2))
 ;; Org stuff
 
-(defun my-old-carryover (old_carryover)
-  (save-excursion
-    (let ((matcher (cdr (org-make-tags-matcher org-journal-carryover-items))))
-      (dolist (entry (reverse old_carryover))
-        (save-restriction
-          (narrow-to-region (car entry) (cadr entry))
-          (goto-char (point-min))
-          (org-scan-tags '(lambda ()
-                            (org-set-tags ":carried:"))
-                         matcher org--matcher-tags-todo-only))))))
-
-(setq org-journal-handle-old-carryover 'my-old-carryover)
-(setq org-journal-skip-carryover-drawers (list "LOGBOOK"))
 
 (after! org
   (setq!
@@ -118,6 +101,8 @@
         org-journal-time-prefix "* "
         org-journal-date-format "%a, %Y-%m-%d"
         org-journal-file-format "%Y-%m-%d.org"))
+
+(add-hook! org-mode #'org-journal--update-org-agenda-files)
 
 (use-package! org-bullets
   :after org
@@ -129,12 +114,12 @@
 (add-hook! 'org-mode-hook (company-mode t))
 (add-hook! 'org-capture-mode-hook (company-mode t))
 
-
+(after! org
+  (setq org-agenda-files '("~/org/OrgFiles/Tasks.org"
+                        "~/org/OrgFiles/Birthdays.org"
+                        "~/org/OrgFiles/Habits.org")))
 (after! org
   (setq!
-        org-agenda-files '("~/org/OrgFiles/Tasks.org"
-                        "~/org/OrgFiles/Birthdays.org"
-                        "~/org/OrgFiles/Habits.org")
         org-refile-targets '((nil :maxlevel . 1) (org-agenda-files :maxlevel . 1))
         org-agenda-span 21
         org-ellipsis " ▾"
@@ -148,13 +133,13 @@
         org-capture-templates
         '(("t" "Personal todo" entry
         (file+headline +org-capture-todo-file "Inbox")
-        "* TODO %?\n%i" :prepend t :kill-buffer t)
+        "* TODO %?\n%i" :empty-lines 1 :kill-buffer t)
         ("T" "Personal todo with capture link" entry
         (file+headline +org-capture-todo-file "Inbox")
-        "* TODO %?\n%i \n%a" :prepend t :kill-buffer t)
+        "* TODO %?\n%i\n%a" :empty-lines 1 :kill-buffer t)
         ("n" "Personal notes" entry
         (file+datetree +org-capture-notes-file)
-        "* %u %?\n%i\n%a" :prepend t :kill-buffer t))
+        "* %u %?\n%i\n%a" :empty-lines 1 :kill-buffer t))
         org-log-done 'time
         org-log-into-drawer t
         org-agenda-window-setup 'other-window)
